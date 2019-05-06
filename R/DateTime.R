@@ -7,7 +7,7 @@
 #' @export
 getPreviousWeekday <- function(date) {
 
-  dow <- wday(date, week_start = 6)
+  dow <- lubridate::wday(date, week_start = 6)
   offset <- if_else(dow > 3, 1, dow)
 
   return (date - offset)
@@ -22,7 +22,7 @@ getPreviousWeekday <- function(date) {
 #' @export
 getNextWeekday <- function(date) {
 
-  dow <- wday(date, week_start = 5)
+  dow <- lubridate::wday(date, week_start = 5)
   offset <- if_else(dow > 3, 1, abs(dow-4))
 
   return (date + offset)
@@ -105,5 +105,5 @@ isWeekend <- function(date) {
 #' isWeekday(c(ymd("20190505"), ymd("20190506")))
 #' @export
 isWeekday <- function(date) {
-  return (wday(date, week_start = 1) < 6)
+  return (lubridate::wday(date, week_start = 1) < 6)
 }
