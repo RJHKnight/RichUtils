@@ -17,5 +17,4 @@ Get the previous weekday
 }
 \examples{
 getPreviousWeekday(today())
-#' @export
 }
