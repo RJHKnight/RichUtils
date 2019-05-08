@@ -12,6 +12,8 @@ RoxygenNote: 6.1.1
 Depends: 
   lubridate,
   dplyr,
-  clipr
+  clipr,
+  tidyr,
+  dplyr
 Suggests: 
     testthat (>= 2.1.0)

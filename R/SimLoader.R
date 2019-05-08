@@ -19,13 +19,17 @@ getSimsToLoad <- function(syms, startDate, endDate, strategies, sides = c("BUY",
   dates <- getWeekdays(startDate, endDate)
   baseParams = data.frame(expand.grid(sym = syms, date = dates, side = sides, strategy = strategies, stringsAsFactors = FALSE))
 
-  extraParams <- as.data.frame(list(...))
+  extraParams <- data.frame(list(...), stringsAsFactors = FALSE)
 
   result <- NULL
 
   if (length(extraParams) != 0) {
 
-
+    extraParams <- extraParams %>%
+      tidyr::gather() %>%
+      dplyr::mutate(param = paste0("[", key, "=", value, "]")) %>%
+      dplyr::select(key, param) %>%
+      tidyr::spread(key, param)
 
     baseParams <- cbind(baseParams, extraParams)
   }
