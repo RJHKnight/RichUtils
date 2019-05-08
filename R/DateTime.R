@@ -7,6 +7,7 @@
 #' @export
 getPreviousWeekday <- function(date) {
 
+  date <- handleDate(date)
   dow <- lubridate::wday(date, week_start = 6)
   offset <- if_else(dow > 3, 1, dow)
 
@@ -22,6 +23,7 @@ getPreviousWeekday <- function(date) {
 #' @export
 getNextWeekday <- function(date) {
 
+  date <- handleDate(date)
   dow <- lubridate::wday(date, week_start = 5)
   offset <- if_else(dow > 3, 1, abs(dow-4))
 
@@ -39,6 +41,8 @@ getNextWeekday <- function(date) {
 #' offsetByWeekdays(today(), -4)
 #' @export
 offsetByWeekdays <- function(date, n, forward = TRUE) {
+
+  date <- handleDate(date)
 
   # Handle negative n
   if (n < 0) {
@@ -63,6 +67,8 @@ offsetByWeekdays <- function(date, n, forward = TRUE) {
 #' getAdjacentWeekdays(today(), -4)
 #' @export
 getAdjacentWeekdays <- function(date, n, forward = TRUE) {
+
+  date <- handleDate(date)
 
   # Handle negative n
   if (n < 0) {
@@ -94,6 +100,9 @@ getAdjacentWeekdays <- function(date, n, forward = TRUE) {
 #' isWeekend(c(ymd("20190505"), ymd("20190506")))
 #' @export
 isWeekend <- function(date) {
+
+  date <- handleDate(date)
+
   return (!isWeekday(date))
 }
 
@@ -105,5 +114,64 @@ isWeekend <- function(date) {
 #' isWeekday(c(ymd("20190505"), ymd("20190506")))
 #' @export
 isWeekday <- function(date) {
+
+  date <- handleDate(date)
   return (lubridate::wday(date, week_start = 1) < 6)
+}
+
+
+handleDate <- function(date) {
+
+  if (any(class(date) == "Date") | any(class(date) == "POSIXct")) {
+    return (date)
+  }
+
+  tryCatch(
+   lubridate::ymd(date),
+   warning = function(w) return (lubridate::ymd_hms(date)),
+   return (lubridate::ymd(date))
+  )
+}
+
+#' Get all the week days between two points
+#'
+#' @param startDate - start date
+#' @param endDate - end date
+#' @return A list of Dates
+#' @examples
+#' getWeekdays("2019.01.01", "2019.01.05")
+#' @export
+getWeekdays <- function(startDate, endDate) {
+
+  startDate <- handleDate(startDate)
+  endDate <- handleDate(endDate)
+
+  allDates <- seq(from = startDate, to = endDate, by = "day")
+
+  return (allDates[isWeekday(allDates)])
+}
+
+#' Convert a date into a Tic compatable string
+#'
+#' @param date - date to convert
+#' @return The string to pass to tic
+#' @examples
+#' toTicFormat(ymd("2019-01-01"))
+#' @export
+toTicFormat <- function(date) {
+
+  ticFormat <- "%Y.%m.%d"
+  return (format(date, ticFormat))
+}
+
+#' Create a date from a Tic compatable string
+#'
+#' @param date - date string to convert
+#' @return The parsed date
+#' @examples
+#' fromTicFormat("2019.01.01")
+#' @export
+fromTicFormat <- function(date) {
+
+  return (lubridate::ymd(date))
 }
